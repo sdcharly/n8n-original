@@ -7,6 +7,14 @@ import type {
 	IRequestOptions,
 	IHttpRequestMethods,
 } from 'n8n-workflow';
+export const DEFAULT_LINKEDIN_API_VERSION = '202604';
+export function getLinkedInApiVersion(): string {
+	const override = process.env.N8N_LINKEDIN_API_VERSION;
+	if (override && /^\d{6}$/.test(override.trim())) {
+		return override.trim();
+	}
+	return DEFAULT_LINKEDIN_API_VERSION;
+}
 import { NodeApiError } from 'n8n-workflow';
 function resolveHeaderData(fullResponse: any) {
 	if (fullResponse.statusCode === 201) {
@@ -37,7 +45,7 @@ export async function linkedInApiRequest(
 		headers: {
 			Accept: 'application/json',
 			'X-Restli-Protocol-Version': '2.0.0',
-			'LinkedIn-Version': '202604',
+			'LinkedIn-Version': getLinkedInApiVersion(),
 		},
 		method,
 		body,
